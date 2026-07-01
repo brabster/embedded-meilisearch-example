@@ -1,9 +1,9 @@
 plugins {
     application
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.4.0"
 }
 
-val ktorVersion = "2.3.12"
+val ktorVersion = "3.5.1"
 
 group = "com.example"
 version = "1.0.0"
@@ -18,7 +18,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
 
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.16")
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.18")
 }
 
 application {

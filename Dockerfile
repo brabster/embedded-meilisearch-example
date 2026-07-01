@@ -1,4 +1,4 @@
-FROM getmeili/meilisearch:v1.11 AS meili-builder
+FROM getmeili/meilisearch:v1.48.3 AS meili-builder
 
 RUN set -eux; \
     if command -v apk >/dev/null 2>&1; then \
@@ -39,7 +39,7 @@ RUN set -eux; \
     kill "$pid"; \
     wait "$pid" || true
 
-FROM gradle:8.10-jdk17 AS kotlin-builder
+FROM gradle:9.6.1-jdk17 AS kotlin-builder
 WORKDIR /workspace
 RUN set -eux; \
     if command -v apk >/dev/null 2>&1; then \
@@ -53,7 +53,7 @@ COPY build.gradle.kts settings.gradle.kts ./
 COPY src ./src
 RUN gradle --no-daemon shadowJar
 
-FROM alpine:3.19
+FROM alpine:3.22
 RUN apk add --no-cache openjdk17-jre getmeili-bin curl
 WORKDIR /app
 COPY --from=meili-builder /meili_data /meili_data

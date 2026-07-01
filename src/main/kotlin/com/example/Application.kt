@@ -26,7 +26,7 @@ fun main() {
 fun Application.module() {
     val client = HttpClient(CIO)
 
-    environment.monitor.subscribe(ApplicationStopping) {
+    monitor.subscribe(ApplicationStopping) {
         client.close()
     }
 
