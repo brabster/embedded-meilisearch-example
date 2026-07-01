@@ -1,19 +1,9 @@
 plugins {
     application
+    kotlin("jvm") version "2.2.0"
 }
 
 val ktorVersion = "2.3.12"
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.25")
-    }
-}
-
-apply(plugin = "org.jetbrains.kotlin.jvm")
 
 group = "com.example"
 version = "1.0.0"
@@ -35,7 +25,7 @@ application {
     mainClass.set("com.example.ApplicationKt")
 }
 
-extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>("kotlin") {
+kotlin {
     jvmToolchain(17)
 }
 
