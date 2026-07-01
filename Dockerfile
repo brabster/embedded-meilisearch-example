@@ -54,13 +54,15 @@ COPY src ./src
 RUN gradle --no-daemon shadowJar
 
 FROM alpine:3.22
-RUN apk add --no-cache openjdk17-jre getmeili-bin curl
+RUN apk add --no-cache openjdk17-jre getmeili-bin curl \
+    && addgroup -S app \
+    && adduser -S app -G app
 WORKDIR /app
 COPY --from=meili-builder /meili_data /meili_data
 COPY --from=kotlin-builder /workspace/build/libs/*-all.jar /app/app.jar
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
+RUN chmod +x /entrypoint.sh && chown -R app:app /meili_data /app /entrypoint.sh
+USER app
 EXPOSE 8080
 ENV HOST=0.0.0.0
 ENV PORT=8080
