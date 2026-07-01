@@ -39,8 +39,17 @@ fun Application.module() {
                     HttpStatusCode.BadRequest
                 )
 
-            val meiliResponse = client.get("http://127.0.0.1:7700/indexes/movies/search") {
-                parameter("q", query)
+            val meiliResponse = try {
+                client.get("http://127.0.0.1:7700/indexes/movies/search") {
+                    parameter("q", query)
+                }
+            } catch (exception: Exception) {
+                this@module.environment.log.warn("Local Meilisearch request failed", exception)
+                return@get call.respondText(
+                    text = "{\"message\":\"Search service temporarily unavailable\"}",
+                    contentType = ContentType.Application.Json,
+                    status = HttpStatusCode.ServiceUnavailable
+                )
             }
 
             call.respondText(

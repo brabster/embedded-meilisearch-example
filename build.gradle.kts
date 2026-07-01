@@ -2,6 +2,8 @@ plugins {
     application
 }
 
+val ktorVersion = "2.3.12"
+
 buildscript {
     repositories {
         mavenCentral()
@@ -19,8 +21,6 @@ version = "1.0.0"
 repositories {
     mavenCentral()
 }
-
-val ktorVersion = "2.3.12"
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
