@@ -15,6 +15,7 @@ It exists to ensure that future agentic and human contributors follow the same p
 - **Run as a non-root user.** The final runtime stage must create a dedicated system user (e.g. `app`) and switch to it with `USER`. Do not run services as root.
 - **Copy binaries across stages rather than re-installing.** Where the same binary is used in a builder stage and the runtime stage (e.g. Meilisearch), copy it from the builder stage (`COPY --from=...`) rather than installing it separately. This guarantees the runtime binary is exactly the same version as the one used to produce build-time artefacts.
 - **Bind internal services to localhost only.** Services that are not meant to be externally accessible (e.g. Meilisearch on port 7700) must be bound to `127.0.0.1`, never `0.0.0.0`.
+- **Match the runtime base image libc to copied binaries.** When copying a pre-compiled binary from another image (e.g. Meilisearch from `getmeili/meilisearch`), the runtime base image must use the same C library (glibc vs. musl). The official Meilisearch image is Debian/glibc-based; use a Debian slim base for the runtime stage. Do not use Alpine when copying glibc-linked binaries.
 
 ## Process Management & Shutdown
 

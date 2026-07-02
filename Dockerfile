@@ -1,6 +1,6 @@
 ARG MEILISEARCH_VERSION=v1.48.3
 ARG GRADLE_VERSION=9.6.1-jdk21
-ARG ALPINE_VERSION=3.22
+ARG DEBIAN_VERSION=12-slim
 
 FROM getmeili/meilisearch:${MEILISEARCH_VERSION} AS meili-builder
 
@@ -21,10 +21,12 @@ COPY build.gradle.kts settings.gradle.kts ./
 COPY src ./src
 RUN gradle --no-daemon shadowJar
 
-FROM alpine:${ALPINE_VERSION}
-RUN apk add --no-cache openjdk21-jre curl \
-    && addgroup -S app \
-    && adduser -S app -G app
+FROM debian:${DEBIAN_VERSION}
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openjdk-21-jre-headless curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -r app \
+    && useradd -r -g app app
 WORKDIR /app
 COPY --from=meili-builder /bin/meilisearch /usr/local/bin/meilisearch
 COPY --from=meili-builder /meili_data /meili_data
