@@ -1,6 +1,6 @@
 ARG MEILISEARCH_VERSION=v1.48.3
 ARG GRADLE_VERSION=9.6.1-jdk21
-ARG DEBIAN_VERSION=12-slim
+ARG JRE_VERSION=21-jre-noble
 
 FROM getmeili/meilisearch:${MEILISEARCH_VERSION} AS meili-builder
 
@@ -21,9 +21,9 @@ COPY build.gradle.kts settings.gradle.kts ./
 COPY src ./src
 RUN gradle --no-daemon shadowJar
 
-FROM debian:${DEBIAN_VERSION}
+FROM eclipse-temurin:${JRE_VERSION}
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends openjdk-21-jre-headless curl \
+    && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd -r app \
     && useradd -r -g app app
