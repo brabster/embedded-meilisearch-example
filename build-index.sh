@@ -10,7 +10,8 @@ elif command -v apt-get >/dev/null 2>&1; then
 fi
 
 mkdir -p /meili_data
-curl -fsSL -o /tmp/movies.json https://raw.githubusercontent.com/meilisearch/meilisearch/latest/datasets/movies.json
+curl -fsSL -o /tmp/movies.json https://milli-benchmarks.fra1.digitaloceanspaces.com/bench/datasets/movies.json
+echo "5b6e4cb660bc20327776e8a33ea197b43d9ec84856710ead1cc87ab24df77de1  /tmp/movies.json" | sha256sum -c -
 
 meilisearch --http-addr 127.0.0.1:7700 --db-path /meili_data --no-analytics >/tmp/meili.log 2>&1 &
 pid=$!
