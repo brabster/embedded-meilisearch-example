@@ -32,7 +32,7 @@ fun Application.module() {
     install(DefaultHeaders) {
         header("X-Content-Type-Options", "nosniff")
         header("X-Frame-Options", "DENY")
-        header("Content-Security-Policy", "default-src 'self'; style-src 'unsafe-inline'")
+        header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'")
     }
 
     monitor.subscribe(ApplicationStopping) {
