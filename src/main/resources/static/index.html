@@ -92,7 +92,7 @@
         const data = await res.json();
         if (!res.ok) {
           status.textContent = '';
-          results.innerHTML = `<li class="error">${data.message ?? 'Error ' + res.status}</li>`;
+          results.innerHTML = `<li class="error">${esc(data.message ?? 'Error ' + res.status)}</li>`;
           return;
         }
         const hits = data.hits ?? [];

@@ -10,9 +10,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.call
+import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -26,6 +28,12 @@ fun main() {
 
 fun Application.module() {
     val client = HttpClient(CIO)
+
+    install(DefaultHeaders) {
+        header("X-Content-Type-Options", "nosniff")
+        header("X-Frame-Options", "DENY")
+        header("Content-Security-Policy", "default-src 'self'; style-src 'unsafe-inline'")
+    }
 
     monitor.subscribe(ApplicationStopping) {
         client.close()
