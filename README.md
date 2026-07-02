@@ -26,7 +26,11 @@ make docker-run
 
 Meilisearch is started inside the container and bound to `127.0.0.1:7700`, so it is not externally reachable.
 
-## Query
+## Web UI
+
+Open [http://localhost:8080](http://localhost:8080) in your browser for a client-side movie search UI.
+
+## API
 
 ```bash
 curl "http://localhost:8080/api/search?q=batman"

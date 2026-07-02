@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Search</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+
+    #search-box {
+      width: 100%;
+      max-width: 600px;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #search-box:focus { border-color: #555; }
+
+    #status {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #666;
+      min-height: 1.2em;
+    }
+
+    #results {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 1.5rem;
+      list-style: none;
+    }
+
+    #results li {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .title { font-weight: 600; }
+    .year  { font-size: 0.85rem; color: #888; white-space: nowrap; }
+    .genres { font-size: 0.8rem; color: #666; }
+
+    .error { color: #c0392b; }
+  </style>
+</head>
+<body>
+  <h1>🎬 Movie Search</h1>
+  <input id="search-box" type="search" placeholder="Search movies…" autofocus aria-label="Search movies">
+  <p id="status"></p>
+  <ul id="results" aria-label="Search results" aria-live="polite"></ul>
+
+  <script>
+    const input   = document.getElementById('search-box');
+    const status  = document.getElementById('status');
+    const results = document.getElementById('results');
+    let debounce;
+
+    input.addEventListener('input', () => {
+      clearTimeout(debounce);
+      const q = input.value.trim();
+      if (!q) { results.innerHTML = ''; status.textContent = ''; return; }
+      debounce = setTimeout(() => search(q), 250);
+    });
+
+    async function search(q) {
+      status.textContent = 'Searching…';
+      results.innerHTML = '';
+      try {
+        const res  = await fetch('/api/search?q=' + encodeURIComponent(q));
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = '';
+          results.innerHTML = `<li class="error">${data.message ?? 'Error ' + res.status}</li>`;
+          return;
+        }
+        const hits = data.hits ?? [];
+        status.textContent = `${data.estimatedTotalHits ?? hits.length} result(s)`;
+        results.innerHTML = hits.map(hit => `
+          <li>
+            <span>
+              <span class="title">${esc(hit.title ?? '')}</span>
+              ${hit.genres?.length ? `<br><span class="genres">${hit.genres.map(esc).join(', ')}</span>` : ''}
+            </span>
+            <span class="year">${esc(String(hit.year ?? ''))}</span>
+          </li>`).join('');
+      } catch (err) {
+        status.textContent = '';
+        results.innerHTML = `<li class="error">Request failed: ${esc(err.message)}</li>`;
+      }
+    }
+
+    function esc(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+  </script>
+</body>
+</html>
