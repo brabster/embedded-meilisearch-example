@@ -1,0 +1,4 @@
+# Gradle/Kotlin local build state
+.gradle/
+.kotlin/
+build/
