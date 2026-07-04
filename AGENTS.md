@@ -15,7 +15,14 @@ It exists to ensure that future agentic and human contributors follow the same p
 - **Run as a non-root user.** The final runtime stage must create a dedicated system user (e.g. `app`) and switch to it with `USER`. Do not run services as root.
 - **Copy binaries across stages rather than re-installing.** Where the same binary is used in a builder stage and the runtime stage (e.g. Meilisearch), copy it from the builder stage (`COPY --from=...`) rather than installing it separately. This guarantees the runtime binary is exactly the same version as the one used to produce build-time artefacts.
 - **Bind internal services to localhost only.** Services that are not meant to be externally accessible (e.g. Meilisearch on port 7700) must be bound to `127.0.0.1`, never `0.0.0.0`.
-- **Match the runtime base image libc to copied binaries.** When copying a pre-compiled binary from another image (e.g. Meilisearch from `getmeili/meilisearch`), the runtime base image must use the same C library (glibc vs. musl). The official Meilisearch image is Debian/glibc-based; use a Debian slim base for the runtime stage. Do not use Alpine when copying glibc-linked binaries.
+- **Match the runtime base image libc to copied binaries.** When copying a pre-compiled binary from another image (e.g. Meilisearch from `getmeili/meilisearch`), the runtime base image must use the same C library (glibc vs. musl). The official Meilisearch image is Debian/glibc-based; do not use Alpine (musl) when copying glibc-linked binaries.
+- **Prefer a JRE base image over installing Java on a bare OS image.** Use an image that ships the JRE pre-installed (e.g. `eclipse-temurin:21-jre-noble`) rather than installing `openjdk-*-jre-headless` via apt on top of a bare Debian/Ubuntu base. Package availability varies across OS releases; a dedicated JRE image is more reliable and predictable.
+- **Extract complex shell logic from Dockerfiles.** Non-trivial `RUN` commands (more than a few lines) must be moved to dedicated `.sh` script files (e.g. `build-index.sh`, `entrypoint.sh`), `COPY`-ed into the image, and executed by name. Inline shell in a `RUN` instruction is harder to read, test, and review.
+
+## External Resources
+
+- **Never use floating branch refs for external data.** URLs that reference a branch name (e.g. `.../meilisearch/latest/datasets/...`) can change or disappear without warning, breaking reproducibility. Use versioned release URLs or content-addressed storage paths.
+- **Verify integrity of every downloaded external resource.** After fetching an external file with `curl -fsSL` (which fails on HTTP errors), immediately verify its SHA-256 checksum with `sha256sum -c`. This ensures the content is exactly what is expected, even if the URL resolves to unexpected content.
 
 ## Process Management & Shutdown
 
@@ -29,6 +36,7 @@ It exists to ensure that future agentic and human contributors follow the same p
 - **Grant minimal permissions.** Declare `permissions` explicitly at the workflow level. Use `contents: read` as the baseline; grant additional permissions only where required (e.g. `security-events: write` for CodeQL).
 - **Avoid duplicate workflow runs on PRs.** Restrict the `push` trigger to `branches: [main]` so that pushes to PR branches only fire the `pull_request` event (not both). This prevents every commit on a PR branch from running each workflow twice.
 - **Run CodeQL SAST on a weekly schedule** in addition to push/PR triggers so that newly discovered vulnerabilities in unchanged code are also caught.
+- **Keep language versions within CodeQL's supported range.** Before upgrading a compiler or language version (e.g. Kotlin), verify that the target version is supported by the CodeQL extractor in use. Upgrading beyond the supported ceiling breaks security scanning.
 
 ## Security
 
