@@ -1,0 +1,22 @@
+[
+  {"id": 1, "title": "Spirited Away", "genre": "Animation", "year": 2001, "rating": 8.6, "director": "Hayao Miyazaki", "overview": "A young girl enters a world of spirits and must work to free herself and her parents."},
+  {"id": 2, "title": "The Dark Knight", "genre": "Action", "year": 2008, "rating": 9.0, "director": "Christopher Nolan", "overview": "Batman faces the Joker, a criminal mastermind who plunges Gotham into anarchy."},
+  {"id": 3, "title": "Parasite", "genre": "Drama", "year": 2019, "rating": 8.6, "director": "Bong Joon-ho", "overview": "A poor family schemes to become employed by a wealthy household with unexpected consequences."},
+  {"id": 4, "title": "Inception", "genre": "Sci-Fi", "year": 2010, "rating": 8.8, "director": "Christopher Nolan", "overview": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task."},
+  {"id": 5, "title": "Amélie", "genre": "Comedy", "year": 2001, "rating": 8.3, "director": "Jean-Pierre Jeunet", "overview": "A shy waitress decides to improve the lives of those around her while neglecting her own."},
+  {"id": 6, "title": "Interstellar", "genre": "Sci-Fi", "year": 2014, "rating": 8.6, "director": "Christopher Nolan", "overview": "A team of explorers travel through a wormhole in space to ensure humanity's survival."},
+  {"id": 7, "title": "The Grand Budapest Hotel", "genre": "Comedy", "year": 2014, "rating": 8.1, "director": "Wes Anderson", "overview": "A concierge and his lobby boy become involved in the theft of a priceless painting."},
+  {"id": 8, "title": "Mad Max: Fury Road", "genre": "Action", "year": 2015, "rating": 8.1, "director": "George Miller", "overview": "A woman rebels against a tyrant and his armies in a post-apocalyptic wasteland."},
+  {"id": 9, "title": "Knives Out", "genre": "Drama", "year": 2019, "rating": 7.9, "director": "Rian Johnson", "overview": "A detective investigates the death of a family patriarch after his 85th birthday."},
+  {"id": 10, "title": "Princess Mononoke", "genre": "Animation", "year": 1997, "rating": 8.4, "director": "Hayao Miyazaki", "overview": "A prince becomes caught in a struggle between forest gods and a mining colony."},
+  {"id": 11, "title": "The Shape of Water", "genre": "Drama", "year": 2017, "rating": 7.3, "director": "Guillermo del Toro", "overview": "A mute janitor forms a bond with an amphibious creature held in a high-security government lab."},
+  {"id": 12, "title": "Everything Everywhere All at Once", "genre": "Sci-Fi", "year": 2022, "rating": 7.8, "director": "Daniel Kwan", "overview": "A middle-aged Chinese-American laundromat owner is drawn into an interdimensional adventure."},
+  {"id": 13, "title": "Drive", "genre": "Action", "year": 2011, "rating": 7.8, "director": "Nicolas Winding Refn", "overview": "A getaway driver moonlights as a Hollywood stuntman and becomes entangled with the mob."},
+  {"id": 14, "title": "Moonlight", "genre": "Drama", "year": 2016, "rating": 7.4, "director": "Barry Jenkins", "overview": "A young Black man grapples with his identity and sexuality across three defining chapters of his life."},
+  {"id": 15, "title": "Hereditary", "genre": "Horror", "year": 2018, "rating": 7.3, "director": "Ari Aster", "overview": "A family unravels cryptic and terrifying secrets about their ancestry after a tragedy strikes."},
+  {"id": 16, "title": "Portrait of a Lady on Fire", "genre": "Drama", "year": 2019, "rating": 8.1, "director": "Céline Sciamma", "overview": "On an isolated island, a forbidden love develops between a painter and her subject."},
+  {"id": 17, "title": "Get Out", "genre": "Horror", "year": 2017, "rating": 7.7, "director": "Jordan Peele", "overview": "A Black man visiting his white girlfriend's family discovers something deeply unsettling."},
+  {"id": 18, "title": "The Lighthouse", "genre": "Horror", "year": 2019, "rating": 7.5, "director": "Robert Eggers", "overview": "Two lighthouse keepers descend into madness on a remote New England island."},
+  {"id": 19, "title": "Whiplash", "genre": "Drama", "year": 2014, "rating": 8.5, "director": "Damien Chazelle", "overview": "A young drummer enrolls at a cut-throat music conservatory where he is mentored by an abusive instructor."},
+  {"id": 20, "title": "1917", "genre": "Action", "year": 2019, "rating": 8.3, "director": "Sam Mendes", "overview": "Two British soldiers are sent on a dangerous mission to deliver a message that could save 1,600 men."}
+]
