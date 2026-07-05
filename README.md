@@ -10,7 +10,7 @@ A common trap when embedding search is runtime data management: the application 
 
 This example flips that model. The heavy lifting moves to build time. The CI pipeline pre-indexes data directly into Meilisearch and ships the result as a sidecar container alongside the application. The app and its data become a single atomic deployable unit. No polling, no UI hangs, no brittle parsing.
 
-Here, a dedicated `seeder` service (see `docker-compose.yml`) downloads the [Meilisearch movies dataset](https://github.com/meilisearch/datasets/tree/main/datasets/movies) from an external source and indexes it into Meilisearch before the backend starts. This simulates a CI pipeline step that would build and publish a pre-seeded Meilisearch image. The backend itself has no seeding logic.
+Here, `scripts/seed.sh` downloads the [Meilisearch movies dataset](https://github.com/meilisearch/datasets/tree/main/datasets/movies) from GitHub and indexes it into a running Meilisearch instance. The CI pipeline runs this script, then bakes the resulting data directory into a custom Meilisearch Docker image. Both the pre-indexed Meilisearch image and the backend image are published to GitHub Container Registry and deployed together. The backend itself has no seeding logic.
 
 ### Pass-through API
 
@@ -58,13 +58,28 @@ All parameters are optional.
 
 ## Running locally
 
-Requires Docker and Docker Compose.
+Requires Docker and Docker Compose. Pull the pre-built images published by CI and start the stack:
 
 ```sh
+docker compose pull
 make run
 ```
 
-This builds the application image and starts the Meilisearch sidecar, the seeder, and the backend. The seeder downloads the movies dataset from GitHub and indexes it into Meilisearch before the backend accepts traffic. On the first run this takes a few minutes while the dataset is downloaded.
+### Local development
+
+To build and run from source, start Meilisearch directly and seed it using `scripts/seed.sh`, then start the backend:
+
+```sh
+docker run -d --name meilisearch \
+  -p 7700:7700 \
+  -e MEILI_MASTER_KEY=masterKey \
+  -e MEILI_ENV=production \
+  -v $(pwd)/meili_data:/meili_data \
+  getmeili/meilisearch:v1.14
+make seed
+./gradlew --no-daemon shadowJar
+MEILI_HOST=http://localhost:7700 MEILI_MASTER_KEY=masterKey java -jar build/libs/*-all.jar
+```
 
 ### Dataset
 

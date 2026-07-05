@@ -1,4 +1,4 @@
-name: Build
+name: Build and Publish
 
 on:
   push:
@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -23,3 +24,45 @@ jobs:
 
       - name: Build and test
         run: make build
+
+      - name: Start Meilisearch
+        run: |
+          mkdir -p meili_data
+          docker run -d --name meilisearch \
+            -p 7700:7700 \
+            -e MEILI_MASTER_KEY=masterKey \
+            -e MEILI_ENV=production \
+            -v ${{ github.workspace }}/meili_data:/meili_data \
+            getmeili/meilisearch:v1.14
+
+      - name: Seed movies dataset
+        env:
+          MEILI_HOST: http://localhost:7700
+          MEILI_MASTER_KEY: masterKey
+        run: sh scripts/seed.sh
+
+      - name: Stop Meilisearch
+        run: docker stop meilisearch && docker rm meilisearch
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push pre-indexed Meilisearch image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: meilisearch/Dockerfile
+          push: ${{ github.event_name == 'push' }}
+          tags: ghcr.io/${{ github.repository }}/meilisearch:latest
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          tags: ghcr.io/${{ github.repository }}/backend:latest

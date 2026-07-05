@@ -2,3 +2,6 @@
 .gradle/
 .kotlin/
 build/
+
+# Meilisearch data directory created during CI indexing
+meili_data/
