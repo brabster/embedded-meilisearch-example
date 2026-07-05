@@ -77,37 +77,6 @@ class MeiliClient(private val http: HttpClient, private val baseUrl: String) {
         return (raw["hits"] as? List<Map<String, Any?>>) ?: emptyList()
     }
 
-    suspend fun createIndex(index: String, primaryKey: String) {
-        val response = http.post("$baseUrl/indexes") {
-            contentType(ContentType.Application.Json)
-            setBody(mapOf("uid" to index, "primaryKey" to primaryKey))
-        }
-        if (!response.status.isSuccess() && response.status.value != 409) {
-            logger.warn("Create index failed: {} {}", response.status.value, response.bodyAsText())
-        }
-    }
-
-    suspend fun updateSettings(index: String, settings: Map<String, Any?>) {
-        val response = http.patch("$baseUrl/indexes/$index/settings") {
-            contentType(ContentType.Application.Json)
-            setBody(settings)
-        }
-        if (!response.status.isSuccess()) {
-            logger.warn("Update settings failed for index={}: {} {}", index, response.status.value, response.bodyAsText())
-        }
-    }
-
-    suspend fun ingestDocuments(index: String, documents: List<Map<String, Any?>>) {
-        val response = http.post("$baseUrl/indexes/$index/documents") {
-            contentType(ContentType.Application.Json)
-            setBody(documents)
-        }
-        if (!response.status.isSuccess()) {
-            logger.warn("Ingest documents failed for index={}: {} {}", index, response.status.value, response.bodyAsText())
-        } else {
-            logger.info("Ingested {} documents into index={}", documents.size, index)
-        }
-    }
 }
 
 @Suppress("UNCHECKED_CAST")
