@@ -8,6 +8,23 @@ services:
       MEILI_ENV: development
     volumes:
       - meili_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  seeder:
+    image: alpine:3.20
+    depends_on:
+      meilisearch:
+        condition: service_healthy
+    environment:
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: masterKey
+    volumes:
+      - ./scripts/seed.sh:/seed.sh:ro
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache curl && sh /seed.sh"]
 
   backend:
     build: .
@@ -17,9 +34,9 @@ services:
       MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: masterKey
       SERVER_PORT: "8080"
-      SEED_ON_STARTUP: "true"
     depends_on:
-      - meilisearch
+      meilisearch:
+        condition: service_healthy
 
 volumes:
   meili_data:

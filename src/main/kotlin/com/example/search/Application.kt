@@ -14,10 +14,6 @@ fun main() {
     val httpClient = buildMeiliHttpClient(config.meiliApiKey)
     val meiliClient = MeiliClient(httpClient, config.meiliHost)
 
-    if (config.seedOnStartup) {
-        seedIndexes(meiliClient)
-    }
-
     embeddedServer(Netty, port = config.port) {
         configureApplication(meiliClient)
     }.start(wait = true)

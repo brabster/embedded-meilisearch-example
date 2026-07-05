@@ -10,7 +10,7 @@ A common trap when embedding search is runtime data management: the application 
 
 This example flips that model. The heavy lifting moves to build time. The CI pipeline pre-indexes data directly into Meilisearch and ships the result as a sidecar container alongside the application. The app and its data become a single atomic deployable unit. No polling, no UI hangs, no brittle parsing.
 
-In this repo the seed data is bundled into the application jar and loaded on startup (controlled by `SEED_ON_STARTUP`). In a production pipeline you would build and publish a pre-seeded Meilisearch image instead, removing the startup seeding step entirely.
+Here, a dedicated `seeder` service (see `docker-compose.yml`) downloads the [Meilisearch movies dataset](https://github.com/meilisearch/datasets/tree/main/datasets/movies) from an external source and indexes it into Meilisearch before the backend starts. This simulates a CI pipeline step that would build and publish a pre-seeded Meilisearch image. The backend itself has no seeding logic.
 
 ### Pass-through API
 
@@ -55,7 +55,6 @@ All parameters are optional.
 | `MEILI_HOST` | `http://meilisearch:7700` | Meilisearch base URL |
 | `MEILI_MASTER_KEY` | `masterKey` | Meilisearch API key |
 | `SERVER_PORT` | `8080` | HTTP port the backend listens on |
-| `SEED_ON_STARTUP` | `true` | Load seed data into Meilisearch on startup |
 
 ## Running locally
 
@@ -65,14 +64,17 @@ Requires Docker and Docker Compose.
 make run
 ```
 
-This builds the application image and starts both the Meilisearch sidecar and the backend. Seed data (movies and books) is loaded automatically on first start.
+This builds the application image and starts the Meilisearch sidecar, the seeder, and the backend. The seeder downloads the movies dataset from GitHub and indexes it into Meilisearch before the backend accepts traffic. On the first run this takes a few minutes while the dataset is downloaded.
+
+### Dataset
+
+The `movies` index is populated from the [Meilisearch movies dataset](https://github.com/meilisearch/datasets/tree/main/datasets/movies) — 31,968 movies sourced from TMDB with fields: `id`, `title`, `overview`, `genres`, `poster`, `release_date`.
 
 ### Available indexes
 
 | Index | Primary key |
 |-------|-------------|
 | `movies` | `id` |
-| `books` | `id` |
 
 Example search:
 
